@@ -72,7 +72,8 @@ namespace Hooks {
   ShellExecuteA_t ShellExecuteA_Original;
 
   HINSTANCE WINAPI ShellExecuteW_Hook( HWND hWnd, LPCWSTR lpOperation, LPCWSTR lpFile, LPCWSTR lpParameters, LPCWSTR lpDirectory, INT nShowCmd ) {   
-    if (lpFile && wcsstr(lpFile, L"http") == lpFile) { // make sure to only block URLs and keep file links working
+    // make sure to only block URLs and keep file links working
+    if (lpFile && (_wcsnicmp(lpFile, L"http://", 7) == 0 || _wcsnicmp(lpFile, L"https://", 8) == 0)) {
         Wh_Log(L"Blocked URL: %s", lpFile);
         return ( HINSTANCE ) 33; // return > 32 if function succeeds
     }
@@ -82,8 +83,9 @@ namespace Hooks {
   }
 
   HINSTANCE WINAPI ShellExecuteA_Hook( HWND hWnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, INT nShowCmd ) {
-    if (lpFile && strstr(lpFile, "http") == lpFile) { // make sure to only block URLs and keep file links working
-        Wh_Log(L"Blocked URL: %s", lpFile);
+    // make sure to only block URLs and keep file links working
+    if (lpFile && (_strnicmp(lpFile, "http://", 7) == 0 || _strnicmp(lpFile, "https://", 8) == 0)) {
+        Wh_Log(L"Blocked URL: %S", lpFile);
         return ( HINSTANCE ) 33; // return > 32 if function succeeds
     }
     else {
@@ -93,8 +95,6 @@ namespace Hooks {
 }
 
 BOOL Wh_ModInit() {
-    std::wstring processName = Utils::GetCurrentProcessNameLower();
-
     // Block ShellExecuteW
     HMODULE hShell32 = GetModuleHandle( L"shell32.dll" );
     void* pShellExecuteW  = ( void* ) GetProcAddress( hShell32, "ShellExecuteW" );
