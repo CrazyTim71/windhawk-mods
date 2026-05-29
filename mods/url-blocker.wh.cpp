@@ -78,6 +78,7 @@ namespace Hooks {
         return ( HINSTANCE ) 33; // return > 32 if function succeeds
     }
     else {
+        Wh_Log(L"Allowed URL: %s", lpFile);
         return Hooks::ShellExecuteW_Original(hWnd, lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd);
     }
   }
@@ -89,6 +90,7 @@ namespace Hooks {
         return ( HINSTANCE ) 33; // return > 32 if function succeeds
     }
     else {
+        Wh_Log(L"Allowed URL: %S", lpFile);
         return Hooks::ShellExecuteA_Original(hWnd, lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd);
     }
   }
